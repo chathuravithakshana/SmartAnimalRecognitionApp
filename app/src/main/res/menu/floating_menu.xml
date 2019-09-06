@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<item
+        android:title="@string/action_logout"
+        android:id="@+id/btnLogout">
+
+    </item>-->
+
+    <item
+        android:title="@string/action_about"
+        android:id="@+id/btnAbout">
+    </item>
+
+    <!--<item
+        android:title="@string/action_exit"
+        android:id="@+id/btnExit">
+    </item>-->
+
+</menu>

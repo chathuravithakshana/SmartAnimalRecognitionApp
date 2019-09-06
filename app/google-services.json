@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "490018748775",
+    "firebase_url": "https://smartanimalvoicerecognition.firebaseio.com",
+    "project_id": "smartanimalvoicerecognition",
+    "storage_bucket": "smartanimalvoicerecognition.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490018748775:android:ab6c7f093304dc8e",
+        "android_client_info": {
+          "package_name": "com.example.smartanimalrecognitionapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "490018748775-g14kgvjhfrmcc1cr7l1g3al49spn9q71.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartanimalrecognitionapp",
+            "certificate_hash": "def422c2267d314a71e0000e7005761c954f8c8b"
+          }
+        },
+        {
+          "client_id": "490018748775-lj2et16q23vt6d5re2aa0nm84sjqjn5a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_XJMgGJWWJ0kzG9-wktKE-olVMFnciwM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "490018748775-lj2et16q23vt6d5re2aa0nm84sjqjn5a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490018748775:android:e526fc110b4fadc8",
+        "android_client_info": {
+          "package_name": "com.example.smartanimalvoicerecognition"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "490018748775-26r9r5gbl7rpii7n8a15ou9cfnefen4o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartanimalvoicerecognition",
+            "certificate_hash": "def422c2267d314a71e0000e7005761c954f8c8b"
+          }
+        },
+        {
+          "client_id": "490018748775-lj2et16q23vt6d5re2aa0nm84sjqjn5a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_XJMgGJWWJ0kzG9-wktKE-olVMFnciwM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "490018748775-lj2et16q23vt6d5re2aa0nm84sjqjn5a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
