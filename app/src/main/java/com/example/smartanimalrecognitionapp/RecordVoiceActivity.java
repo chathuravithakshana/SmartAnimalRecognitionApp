@@ -260,6 +260,7 @@ public class RecordVoiceActivity extends AppCompatActivity implements View.OnCli
         return false;
     }*/
 
+    //press back button twice to exit from the app
     @Override
     protected void onStart() {
         super.onStart();
