@@ -1,28 +1,61 @@
 package com.example.smartanimalrecognitionapp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.provider.Settings;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -32,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final int MY_PERMISSION_REQUEST_LOCATION = 99;
     boolean doubleBackToExitPressedOnce = false;
     private StorageReference mStorageRef;
+
+    public DatabaseReference myRefLat;
+    public DatabaseReference myRefLon;
+    private String latitude;
+    private String longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +91,104 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         checkLocationPermission();
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        getLocation();
+
+        //Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(this);
+
     }
+
+
+    public void retrieveLatitude() {
+
+//        //Obtain the SupportMapFragment and get notified when the map is ready to be used.
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(MainActivity.this);
+
+
+        // Read latitude from the database
+        myRefLat = FirebaseDatabase.getInstance().getReference().child("Location").child("Latitude");
+        myRefLat.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    latitude = ds.getValue(String.class);
+                    //#System.out.println("Latitude: " + latitude);
+
+                }setLatitude(latitude);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //Log.d(TAG, databaseError.getMessage()); //Don't ignore errors!
+                System.out.println("Error: " + databaseError.getMessage());
+
+            }
+        });
+    }
+
+
+    public void setLatitude(String lati) {
+        this.latitude = lati;
+        //#System.out.println("hi there latitude, " + latitude);
+        //Log.d(TAG, "hi there, " + yourNameVariable);
+    }
+
+    public void retrieveLongitude(){
+
+//        //Obtain the SupportMapFragment and get notified when the map is ready to be used.
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+
+
+        // Read longitude from the database
+        myRefLon = FirebaseDatabase.getInstance().getReference().child("Location").child("Longitude");
+        myRefLon.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    longitude = ds.getValue(String.class);
+                    //#System.out.println("Longitude: " + longitude);
+
+                }setLongitude(longitude);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //Log.d(TAG, databaseError.getMessage()); //Don't ignore errors!
+                System.out.println("Error: " + databaseError.getMessage());
+
+            }
+        });
+
+    }
+
+    public void setLongitude(String longi) {
+        this.longitude = longi;
+        //#System.out.println("hi there longitude, " + longitude);
+        //Log.d(TAG, "hi there, " + yourNameVariable);
+    }
+
+    public String getLatitude() {
+        //retrieveLatitude();
+        return latitude;
+    }
+
+    public String getLongitude() {
+        //retrieveLongitude();
+        return longitude;
+    }
+
+    public void getLocation() {
+        retrieveLatitude();
+        retrieveLongitude();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (id) {
             case R.id.btnAbout:
                 Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
-                //go to main activity
+                //go to about activity
                 Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                 startActivity(intent);
                 finish();
@@ -162,25 +297,117 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
 
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        //getLocation();
+        String latit = getLatitude();
+        String longit = getLongitude();
+
+        //Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(this);
+
+        //#System.out.println("wtfwtfwtfwtfwtf.................." + latit + " " + longit);
+
+        if (latit != null && longit != null) {
+            //#System.out.println("###################" + latit);
+            //#System.out.println("###################" + longit);
+            mMap = googleMap;
+
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 //        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 //        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 //        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        //checkLocationPermission();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mMap.getUiSettings().setCompassEnabled(true);
+            mMap.getUiSettings().setAllGesturesEnabled(true);
+            //checkLocationPermission();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+            //#System.out.println("Starting values.............");
+            Double lat = Double.valueOf(latit);
+            Double lon = Double.valueOf(longit);
+            //Double lat = Double.valueOf(latitude);
+            //Double lon = Double.valueOf(longitude);
+            //System.out.println("Lat: " + lat);
+            //System.out.println("Lon: " + lon);
+            //#System.out.println("Ending values.............");
+
+            //LatLng loc1 = new LatLng(-1*lat, lon);
+            LatLng loc1 = new LatLng(lat, lon);
+
+            if (mMap != null) {
+
+                //Instantiate Geocoder class
+                Geocoder geocoder = new Geocoder(getApplicationContext());
+                try {
+
+                    //Set the snippet
+                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                        @Override
+                        public View getInfoWindow(Marker arg0) {
+                            return null;
+                        }
+
+                        @Override
+                        public View getInfoContents(Marker marker) {
+
+                            Context context = getApplicationContext(); //or getActivity(), YourActivity.this, etc.
+
+                            LinearLayout info = new LinearLayout(context);
+                            info.setOrientation(LinearLayout.VERTICAL);
+
+                            TextView title = new TextView(context);
+                            title.setTextColor(Color.BLACK);
+                            title.setGravity(Gravity.CENTER);
+                            title.setTypeface(null, Typeface.BOLD);
+                            title.setText(marker.getTitle());
+
+                            TextView snippet = new TextView(context);
+                            snippet.setTextColor(Color.GRAY);
+                            snippet.setText(marker.getSnippet());
+
+                            info.addView(title);
+                            info.addView(snippet);
+
+                            return info;
+                        }
+                    });
+
+                    List<Address> addressList = geocoder.getFromLocation(Math.round(lat * 100.0) / 100.0, Math.round(lon * 100.0) / 100.0, 1);
+                    String str =   "Latitude: " + addressList.get(0).getLatitude() + " \n " +
+                                    "Longitude: " + addressList.get(0).getLongitude();
+                    mMap.addMarker(new MarkerOptions()
+                            .position(loc1)
+                            .snippet(str)
+                            .title("Animal's Location")
+                            .icon(BitmapDescriptorFactory
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc1, 10.2f));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc1, 12));
+            } else {
+                System.out.println("Location is empty......");
+            }
         }
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
     }
+
 
    /* @Override
     public void onBackPressed() {

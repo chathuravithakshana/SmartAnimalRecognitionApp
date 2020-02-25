@@ -1,0 +1,12 @@
+_silence_
+_unknown_
+bat
+elephant
+hornbill
+junglefowl
+macaque
+myna
+peafowl
+pig
+squirrel
+toad
