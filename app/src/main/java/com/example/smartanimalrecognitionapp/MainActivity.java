@@ -385,9 +385,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     });
 
-                    List<Address> addressList = geocoder.getFromLocation(Math.round(lat * 100.0) / 100.0, Math.round(lon * 100.0) / 100.0, 1);
-                    String str =   "Latitude: " + addressList.get(0).getLatitude() + " \n " +
-                                    "Longitude: " + addressList.get(0).getLongitude();
+                    List<Address> addressList = geocoder.getFromLocation(Math.round(lat * 100.0) / 100.0, Math.round(lon * 10.0) / 10.0, 1);
+                    String str =   "Latitude: " + addressList.get(0).getLatitude() + "\n" +
+                                    "Longitude: " + addressList.get(0).getLongitude() + "\n" +
+                                    "Location: " + addressList.get(0).getLocality();
                     mMap.addMarker(new MarkerOptions()
                             .position(loc1)
                             .snippet(str)
