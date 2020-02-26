@@ -1,6 +1,7 @@
 package com.example.smartanimalrecognitionapp;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
 import android.os.Bundle;
@@ -26,11 +28,13 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -41,6 +45,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -50,12 +56,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -70,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public DatabaseReference myRefLon;
     private String latitude;
     private String longitude;
+
+    private StorageReference storageReference;
+    private StorageReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +110,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
+
+
+
+        displayImages();
 
     }
 
@@ -434,6 +450,81 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent intent = new Intent(MainActivity.this, RecordVoiceActivity.class);
         startActivity(intent);
         finish();
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    public void displayImages() {
+
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        TextView textViewResult = (TextView) findViewById(R.id.textViewResult);
+
+        String imageKey = "bat";
+
+        switch(imageKey) {
+            case "bat":
+                ref = storageReference.child("bat.jpg");
+                textViewResult.setText("The calling animal is a BAT");
+                break;
+            case "elephant":
+                ref = storageReference.child("elephant.jpg");
+                textViewResult.setText("The calling animal is an ELEPHANT");
+                break;
+            case "hornbill":
+                ref = storageReference.child("hornbill.JPG");
+                textViewResult.setText("The calling animal is a HORNBILL");
+                break;
+            case "junglefowl":
+                ref = storageReference.child("junglefowl.jpg");
+                textViewResult.setText("The calling animal is a JUNGLEFOWL");
+                break;
+            case "macaque":
+                ref = storageReference.child("macaque.jpg");
+                textViewResult.setText("The calling animal is an MACAQUE");
+                break;
+            case "myna":
+                ref = storageReference.child("myna.jpg");
+                textViewResult.setText("The calling animal is a MYNA");
+                break;
+            case "peafowl":
+                ref = storageReference.child("peafowl.jpg");
+                textViewResult.setText("The calling animal is a PEAFOWL");
+                break;
+            case "pig":
+                ref = storageReference.child("pig.jpg");
+                textViewResult.setText("The calling animal is an WILD BOAR");
+                break;
+            case "squirrel":
+                ref = storageReference.child("squirrel.jpg");
+                textViewResult.setText("The calling animal is a SQUIRREL");
+                break;
+            case "toad":
+                ref = storageReference.child("toad.jpg");
+                textViewResult.setText("The calling animal is a TOAD");
+                break;
+            default:
+                ref = storageReference.child("error.jpg");
+                textViewResult.setText("ERROR FROM THE DATABASE");
+                break;
+        }
+
+        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            ImageView image = (ImageView) findViewById(R.id.imageViewAnimal);
+            @Override
+            public void onSuccess(Uri uri) {
+                String url = uri.toString();
+                Picasso.with(MainActivity.this).load(url).fit().centerCrop().into(image);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+
+
     }
 
 }
