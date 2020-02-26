@@ -26,7 +26,7 @@ public class DownloadModel extends AppCompatActivity {
 
         //Define remote model
         final FirebaseCustomRemoteModel remoteModel =
-                new FirebaseCustomRemoteModel.Builder("model").build();
+                new FirebaseCustomRemoteModel.Builder("model.tflite").build();
 
         //Download remote model
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
