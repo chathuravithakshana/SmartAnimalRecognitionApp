@@ -23,18 +23,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -111,6 +113,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
+        /*if ((getLatitude()) != null && (getLongitude()) != null) {
+            final Button button = (Button) findViewById(R.id.btnLocation);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    // change the latlng to your specified latlng
+                    CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(getLatitude()), Double.valueOf(getLongitude())),10 );
+                    mMap.moveCamera(camera);
+                }
+            });
+        }
+        else {
+            Toast.makeText(this, "Location not retrieved successfully", Toast.LENGTH_SHORT).show();
+        }*/
+
+        final Button button = (Button) findViewById(R.id.btnLocation);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // change the latlng to your specified latlng
+                CameraUpdate camera = CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(getLatitude()), Double.valueOf(getLongitude())),10 );
+                mMap.moveCamera(camera);
+            }
+        });
+
+
 
 
         displayImages();
@@ -127,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Read latitude from the database
         myRefLat = FirebaseDatabase.getInstance().getReference().child("Location").child("Latitude");
-        myRefLat.addListenerForSingleValueEvent(new ValueEventListener() {
+        myRefLat.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
@@ -163,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Read longitude from the database
         myRefLon = FirebaseDatabase.getInstance().getReference().child("Location").child("Longitude");
-        myRefLon.addValueEventListener(new ValueEventListener() {
+        myRefLon.orderByKey().limitToLast(1).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
@@ -335,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //#System.out.println("###################" + longit);
             mMap = googleMap;
 
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 //        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 //        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 //        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
@@ -411,13 +437,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .title("Animal's Location")
                             .icon(BitmapDescriptorFactory
                                     .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc1, 10.2f));
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc1, 12));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-
-                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc1, 12));
             } else {
                 System.out.println("Location is empty......");
             }
@@ -465,47 +489,58 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch(imageKey) {
             case "bat":
                 ref = storageReference.child("bat.jpg");
-                textViewResult.setText("The calling animal is a BAT");
+                String text1 = "The calling animal is a <b> BAT </b>";
+                textViewResult.setText(Html.fromHtml(text1));
                 break;
             case "elephant":
                 ref = storageReference.child("elephant.jpg");
-                textViewResult.setText("The calling animal is an ELEPHANT");
+                String text2 = "The calling animal is an <b> ELEPHANT </b>";
+                textViewResult.setText(Html.fromHtml(text2));
                 break;
             case "hornbill":
                 ref = storageReference.child("hornbill.JPG");
-                textViewResult.setText("The calling animal is a HORNBILL");
+                String text3 = "The calling animal is a <b> HORNBILL </b>";
+                textViewResult.setText(Html.fromHtml(text3));
                 break;
             case "junglefowl":
                 ref = storageReference.child("junglefowl.jpg");
-                textViewResult.setText("The calling animal is a JUNGLEFOWL");
+                String text4 = "The calling animal is a <b> JUNGLEFOWL </b>";
+                textViewResult.setText(Html.fromHtml(text4));
                 break;
             case "macaque":
                 ref = storageReference.child("macaque.jpg");
-                textViewResult.setText("The calling animal is an MACAQUE");
+                String text5 = "The calling animal is a <b> MACAQUE </b>";
+                textViewResult.setText(Html.fromHtml(text5));
                 break;
             case "myna":
                 ref = storageReference.child("myna.jpg");
-                textViewResult.setText("The calling animal is a MYNA");
+                String text6 = "The calling animal is a <b> MYNA </b>";
+                textViewResult.setText(Html.fromHtml(text6));
                 break;
             case "peafowl":
                 ref = storageReference.child("peafowl.jpg");
-                textViewResult.setText("The calling animal is a PEAFOWL");
+                String text7 = "The calling animal is a <b> PEAFOWL </b>";
+                textViewResult.setText(Html.fromHtml(text7));
                 break;
             case "pig":
                 ref = storageReference.child("pig.jpg");
-                textViewResult.setText("The calling animal is an WILD BOAR");
+                String text8 = "The calling animal is a <b> WILD BOAR </b>";
+                textViewResult.setText(Html.fromHtml(text8));
                 break;
             case "squirrel":
                 ref = storageReference.child("squirrel.jpg");
-                textViewResult.setText("The calling animal is a SQUIRREL");
+                String text9 = "The calling animal is a <b> SQUIRREL </b>";
+                textViewResult.setText(Html.fromHtml(text9));
                 break;
             case "toad":
                 ref = storageReference.child("toad.jpg");
-                textViewResult.setText("The calling animal is a TOAD");
+                String text10 = "The calling animal is a <b> TOAD </b>";
+                textViewResult.setText(Html.fromHtml(text10));
                 break;
             default:
                 ref = storageReference.child("error.jpg");
-                textViewResult.setText("ERROR FROM THE DATABASE");
+                String textError = "<b> ERROR FROM THE DATABASE </b>";
+                textViewResult.setText(Html.fromHtml(textError));
                 break;
         }
 
@@ -514,7 +549,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onSuccess(Uri uri) {
                 String url = uri.toString();
-                Picasso.with(MainActivity.this).load(url).fit().centerCrop().into(image);
+                Picasso.with(MainActivity.this).load(url).fit().centerInside().into(image);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
