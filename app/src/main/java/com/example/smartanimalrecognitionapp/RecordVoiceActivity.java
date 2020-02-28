@@ -6,12 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +27,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
@@ -54,6 +61,8 @@ public class RecordVoiceActivity extends AppCompatActivity implements View.OnCli
     private static final int PERIOD = 2000;
     private int k = 0;
 
+    MediaPlayer mediaPlayer = new MediaPlayer();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +72,32 @@ public class RecordVoiceActivity extends AppCompatActivity implements View.OnCli
         initViews();
         // method call to initialize the listeners
         initListeners();
+
+
+        String fileName = "Voice.wav";
+        //isFileExists(fileName);
+        //deleteFile(fileName);
+        Uri myUri = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName));
+
+        /*File file = new File("/data/com.example.smartanimalrecognitionapp/files/Download/Voice.wav");
+        //File file = new File("/storage/emulated/0/Download/" + fileName);
+        boolean exists = file.exists();
+        boolean deleted = file.delete();
+        file.deleteOnExit();
+        Log.v("log_tag","exists: " + exists);
+        Log.v("log_tag","deleted: " + deleted);*/
+
+        try {
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setDataSource(getApplicationContext(), myUri);
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //mediaPlayer.start();
     }
+
+
 
     /**
      * method to initialize the views
@@ -197,10 +231,21 @@ public class RecordVoiceActivity extends AppCompatActivity implements View.OnCli
                 //editTextMinute.setEnabled(true);
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
-                //go to main activity
-                Intent intent = new Intent(RecordVoiceActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+
+                textViewGetStream.setText("Playing");
+                mediaPlayer.start();
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        // Actions to do after 12 seconds
+                        //go to main activity
+                        Intent intent = new Intent(RecordVoiceActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }, 12000);
+
             }
 
         }.start();
@@ -243,6 +288,24 @@ public class RecordVoiceActivity extends AppCompatActivity implements View.OnCli
     }
 
 
+    public boolean isFileExists(String filename){
+
+        File folder1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + filename);
+        return folder1.exists();
+
+
+    }
+
+    public boolean deleteFile( String filename){
+
+        File folder1 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
+        //File folder1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + filename);
+        return folder1.delete();
+
+
+    }
+
+
     //download method
     public void download() {
 
@@ -268,6 +331,11 @@ public class RecordVoiceActivity extends AppCompatActivity implements View.OnCli
     //download file method
     public void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url) {
 
+        //String file = "/storage/emulated/0/Download/" + fileName + fileExtension;
+
+        //System.out.println("File exists path: " + file);
+
+
         DownloadManager downloadManager = (DownloadManager) context.
                 getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(url);
@@ -278,44 +346,6 @@ public class RecordVoiceActivity extends AppCompatActivity implements View.OnCli
 
     }
 
-
-    /*@Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
-    }*/
-
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            switch (event.getAction()) {
-                case KeyEvent.ACTION_DOWN:
-                    if (event.getDownTime() - lastPressedTime < PERIOD) {
-                        finish();
-                        System.exit(0);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Please click BACK again to exit",
-                                Toast.LENGTH_SHORT).show();
-                        lastPressedTime = event.getEventTime();
-                    }
-                    return true;
-            }
-        }
-        return false;
-    }*/
 
     //press back button twice to exit from the app
     @Override
