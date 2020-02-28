@@ -23,19 +23,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Get Stream"
+        android:text="@string/text_time"
         android:textColor="@color/secondaryTextColor"
         android:textSize="40sp" />
 
-    <!--<ImageView
-        android:id="@+id/imageViewReset"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_below="@+id/textViewTime"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/icon_reset"
-        android:visibility="gone" />-->
 
     <ImageView
         android:id="@+id/imageViewStartStop"

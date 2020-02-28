@@ -23,8 +23,8 @@
 
             <ImageView
                 android:id="@+id/imageViewAnimal"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="13dp"
                 android:backgroundTint="@color/colorGray"
@@ -34,15 +34,24 @@
                 android:background="@drawable/border_image"
                 android:src="@drawable/splash_logo"/>
 
-            <TextView
-                android:id="@+id/textViewResult"
+            <WebView
+                android:id="@+id/webViewResult"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="This is a application designed for\n locate and identify animals\nby their voice remotely\nblaaaa blaaaa blaaaa"
-                android:textSize="20dp"
-                android:gravity="center"
+                android:textSize="20sp"
                 android:layout_below="@+id/imageViewAnimal"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="40dp"
+                />
+
+            <TextView
+                android:id="@+id/textViewFooter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text="@string/footer_about"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
                 />
 
         </RelativeLayout>
